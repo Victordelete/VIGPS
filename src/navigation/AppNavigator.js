@@ -3,16 +3,22 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from '../screens/HomeScreen';
-import TesteScreen from '../screens/TesteScreen';
+import RecordScreen from '../screens/RecordScreen';
+import SettingsScreen from '../screens/SettingsScreen'
+import VideosScreen from '../screens/VideosScreen';
+import LandingScreen from '../screens/LandingScreen';
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="TesteScreen">
-        <Stack.Screen name="TesteScreen" component={TesteScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Navigator initialRouteName="HomeScreen">
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: '' }} />
+        <Stack.Screen name="LandingScreen" component={LandingScreen} options={{ title: '' }} />
+        <Stack.Screen name="RecordScreen" component={RecordScreen} options={{ title: '' }} />
+        <Stack.Screen name="VideosScreen" component={VideosScreen} options={{ title: '' }} />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: '' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

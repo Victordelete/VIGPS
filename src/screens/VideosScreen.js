@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
-export default function HomeScreen({ navigation }) {
+export default function VideosScreen({ navigation }) {
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Tela Inicial</Text>
-            <Button
+            <Text style={styles.title}>VideosScreen Inicial</Text>
+            {/* <Button
                 title="Ir para HomeScreen"
                 onPress={() => navigation.navigate('HomeScreen')}
-            />
+            /> */}
         </View>
     );
 }
