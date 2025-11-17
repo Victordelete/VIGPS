@@ -1,13 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, ImageBackground} from 'react-native';
 
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <Image
+      <ImageBackground
         source={require('../../assets/images/home_image.jpg')}
-        style={styles.image}
-      />
+        style={styles.image}>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>VIGPS</Text>
+        </View>
+      </ImageBackground>
+
       <View style={styles.touchableContainer}>
         <TouchableOpacity
           onPress={() => navigation.navigate('LandingScreen')}
@@ -45,13 +49,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fffffffa',
   },
+  titleContainer: {
+    paddingVertical: 50,
+    paddingHorizontal: 22,
+    borderRadius: 10,
+  },
+  title: {
+    color: '#0320a0ff',
+    fontSize: 42,
+    fontWeight: 'bold',
+    fontFamily: 'Cochin',
+  },
   image: {
     width: '100%',
-    height: '80%',
-    borderEndEndRadius: '25%',
-    resizeMode: 'cover',
+    height: '100%',
+    borderEndEndRadius: '23%',
     gap: 20,
     borderColor: '#1c4729d0',
     borderWidth: 3,
+    justifyContent: 'center',
+    overflow: 'hidden',
   }
 });

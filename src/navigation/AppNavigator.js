@@ -8,7 +8,7 @@ import SettingsScreen from '../screens/SettingsScreen'
 import VideosScreen from '../screens/VideosScreen';
 import LandingScreen from '../screens/LandingScreen';
 
-const Stack = createStackNavigator(); ''
+const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
