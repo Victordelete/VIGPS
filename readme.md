@@ -9,3 +9,5 @@ expo 6.3.12
 
 
 npx expo start --web
+
+expo start --clear

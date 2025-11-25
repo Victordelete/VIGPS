@@ -14,11 +14,11 @@ export default function AppNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="HomeScreen">
-        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: '', headerShown: false  }} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} options={{ title: '', headerShown: false}} />
         <Stack.Screen name="LandingScreen" component={LandingScreen} options={{ title: ''}} />
-        <Stack.Screen name="RecordScreen" component={RecordScreen} options={{ title: '' }} />
-        <Stack.Screen name="VideosScreen" component={VideosScreen} options={{ title: '' }} />
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: '' }} />
+        <Stack.Screen name="RecordScreen" component={RecordScreen} options={{ title: ''}} />
+        <Stack.Screen name="VideosScreen" component={VideosScreen} options={{ title: ''}} />
+        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: ''}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
