@@ -1,14 +1,6 @@
-import { tableSchema } from '@nozbe/watermelondb';
+import { sqliteTable, integer, text } from "drizzle-orm/sqlite-core";
 
-export const mySchema = {
-  version: 1,
-  tables: [
-    tableSchema({
-      name: 'tasks',
-      columns: [
-        { name: 'title', type: 'string' },
-        { name: 'done', type: 'boolean' },
-      ],
-    }),
-  ],
-};
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  name: text("name").notNull(),
+});
