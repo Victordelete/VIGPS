@@ -1,32 +1,23 @@
-import { Platform } from "react-native";
-import { drizzle } from "drizzle-orm";
-import * as SQLite from "expo-sqlite";
-import initSqlJs from "sql.js";
+import { File, Directory, Paths } from 'expo-file-system';
+import * as SQLite from 'expo-sqlite';
 
-let db;
+// Caminhos
+const DB_NAME = '../../assets/database/database.db';
+const DB_NAME_REQUIRE = require('../../assets/database/database.db');
 
-export async function getDb() {
-  console.log('teste');
-  // if (db) return db
+async function ensureDatabaseExists() {
 
-  // if (Platform.OS === "web") {
-    
-  //   const SQL = await initSqlJs({
-  //     locateFile: (file) => `https://sql.js.org/dist/${file}`
-  //   });
-    
-  //   const webDb = new SQL.Database();
-  //   db = drizzle(webDb);
-  // } else {
-  //   const sqlite = SQLite.openDatabase("app.db");
-  //   db = drizzle(sqlite); 
-  // }
-  
-  db = await  SQLite.openDatabaseAsync('../../assets/database/database.db');
-  console.log(db);
-  // const sqlite = SQLite.openDatabase("../../assets/database/database.db");
-  // db = drizzle(sqlite); 
-
-  console.log(db);
-  return db;
+  try {
+    const db = SQLite.openDatabaseSync(DB_NAME);
+    const db_version = await db.runAsync("PRAGMA user_version");
+  } catch (error) {
+    console.error(error);
+  }
 }
+
+export async function fetchItems() { 
+  await ensureDatabaseExists(); // garante que o banco está OK
+  const db = SQLite.openDatabaseSync(DB_NAME);
+  const result = await db.getAllAsync('SELECT * FROM users;');
+  return result
+};

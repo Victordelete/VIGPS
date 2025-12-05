@@ -7,15 +7,15 @@ try:
 
     cursor.executescript(
         """
-            CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
-            `id` integer PRIMARY KEY AUTOINCREMENT,
-            `name` text NOT NULL
-            );
+            PRAGMA user_version = 001;
 
             CREATE TABLE `users` (
             `id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
             `name` text NOT NULL
             );
+
+            INSERT OR IGNORE INTO users (id, name) values 
+            (1, 'admin'), (2, 'support'), (3, 'test');
         """
     )
     print("Conexão com o banco de dados estabelecida com sucesso!")

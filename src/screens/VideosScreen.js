@@ -1,28 +1,39 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-// import { getAllUsers } from "../database/queries";
-
-// import React, { useEffect, useState } from "react";
-// import { View, Text, StyleSheet } from "react-native";
-// import { getAllUsers } from "../database/queries";
+import { fetchItems, db} from "../database/db";
 
 export default function VideosScreen({ navigation }) {
 
-  // const [users, setUsers] = useState([]);
+  const [itens, setItens] = useState([]);
+  const [status, setStatus] = useState('Pronto');
 
-  // useEffect(() => {
-  //   load();
-  // }, []);
+  const carregarDados = async () => {
+    setStatus('Carregando...');
+    try {
+      // 1. CHAMA A FUNÇÃO USANDO AWAIT
+      const dadosDoBanco = await fetchItems();
+      
+      // 2. USA OS DADOS
+      setItens(dadosDoBanco);
+      setStatus(`Sucesso! ${dadosDoBanco.length} itens encontrados.`);
+      
+    } catch (error) {
+      // 3. TRATAMENTO DE ERRO
+      setStatus('ERRO ao buscar dados: ' + error.message);
+      console.error('Erro de SQLite:', error);
+    }
+  };
 
-  // async function load() {
-  //   const data = await getAllUsers();
-  //   setUsers(data);
-  //   console.log(data);
-  // }
+  // Exemplo de uso: Carregar dados ao montar o componente
+  useEffect(() => {
+    carregarDados();
+  }, []);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>VideosScreen Inicial</Text>
+      <Text style={styles.title}>data</Text>
+      {/* <Text style={{ marginTop: 10 }}>Primeiro Item: {itens[0]}</Text> */}
       {/* <Button
                 title="Ir para HomeScreen"
                 onPress={() => navigation.navigate('HomeScreen')}
