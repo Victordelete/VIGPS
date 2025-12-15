@@ -1,23 +1,35 @@
 import { CameraView, CameraType, useCameraPermissions, useMicrophonePermissions  } from 'expo-camera';
+import * as MediaLibrary from 'expo-media-library';
 import { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { saveVideo } from "../database/db";
 
 export default function RecordScreen() {
   const [facing, setFacing] = useState(CameraType);
   const [permissionCamera, requestCameraPermission] = useCameraPermissions();
   const [permissionAudio, requestAudioPermission] = useMicrophonePermissions();
+  const [permissionMedia, requestMediaPermission] = MediaLibrary.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
 
-  const cameraRef = useRef(null);
+  const cameraRef = useRef(CameraView);
 
-  if (!permissionCamera || !permissionAudio) {
+  if (!permissionCamera || !permissionAudio || !permissionMedia) {
     return <View />;
+  }
+
+  if (!permissionMedia.granted) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>Necessário permissão para acessar arquivos.</Text>
+        <Button onPress={requestMediaPermission} title="Permitir arquivos." />
+      </View>
+    );
   }
 
   if (!permissionCamera.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>Nece ssário permissão para acessar câmera.</Text>
+        <Text style={styles.message}>Necessário permissão para acessar câmera.</Text>
         <Button onPress={requestCameraPermission} title="Permitir câmera." />
       </View>
     );
@@ -42,18 +54,23 @@ export default function RecordScreen() {
     try {
       setIsRecording(true);
 
-      const video = await cameraRef.current.recordAsync({
-        maxDuration: 60, // opcional
-        quality: '1080p', // opcional
-        mute: true
-      });
+      const video = await cameraRef.current?.recordAsync();
 
-      console.log("🎥 Vídeo gravado:", video.uri);
-
+      const asset = await MediaLibrary.createAssetAsync(video.uri);
+      await MediaLibrary.createAlbumAsync("ViGPSVideos", asset, false);
+      const video_values = {
+        user_id: 1,
+        name: asset.filename.slice(0, -4),
+        path: asset.uri,
+        record_date:  new Date(asset.creationTime).toISOString().replace('T', ' ').slice(0, -5),
+      };
+      saveVideo(video_values);
       setIsRecording(false);
     } catch (err) {
       console.log("Erro ao gravar vídeo:", err);
       setIsRecording(false);
+    } finally {
+      setRecording(false);
     }
   };
 
@@ -61,12 +78,12 @@ export default function RecordScreen() {
     if (!cameraRef.current) return;
     cameraRef.current.stopRecording();
     setIsRecording(false);
-    console.log("📍 Gravação parada");
   };
 
   return (
     <View style={styles.container}>
-      <CameraView 
+      <CameraView
+        mode='video'
         style={styles.camera} 
         facing={facing} 
         ref={cameraRef}
@@ -74,12 +91,10 @@ export default function RecordScreen() {
 
       <View style={styles.buttonContainer}>
 
-        {/* Alternar câmera */}
         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
           <Text style={styles.text}>Virar</Text>
         </TouchableOpacity>
 
-        {/* Botão de gravar / parar */}
         {!isRecording ? (
           <TouchableOpacity style={styles.recordButton} onPress={startRecording}>
             <Text style={styles.text}>Gravar</Text>

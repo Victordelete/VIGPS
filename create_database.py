@@ -9,9 +9,6 @@ try:
         """
             PRAGMA user_version = 001;
 
-            DROP TABLE IF EXISTS user;
-            DROP TABLE IF EXISTS video;
-
             CREATE TABLE user (
                 id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
                 name text NOT NULL,
@@ -28,17 +25,21 @@ try:
                 id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
                 user_id INTEGER NOT NULL,
                 name text NOT NULL,
-                record_date DATETIME NOT NULL,
+                record_date DATETIME,
+                is_sync BOOLEAN DEFAULT 0,
                 FOREIGN KEY (user_id) REFERENCES user (id) ON DELETE CASCADE
             );
 
             INSERT OR IGNORE INTO video (id, user_id, name, record_date) values 
-                    (1, 1, 'video1.mp4', '2000-01-01'),
-                    (2, 1, 'video2.mp4', '2000-01-01'),
-                   (3, 1, 'video3.mp4', '2000-01-01');
+                    (1, 1, 'video1', '2000-01-01'),
+                    (2, 1, 'video2', '2000-01-01'),
+                    (3, 1, 'video3', '2000-01-01'),
+                    (4, 1, 'video4', '2000-01-01'),
+                    (5, 1, 'video5', '2000-01-01');
         """
     )
     print('Conexão com o banco de dados estabelecida com sucesso!')
+    conn.close()
 except sqlite3.Error as e:
     print(f'Erro ao conectar ao banco de dados: {e}')
 finally:

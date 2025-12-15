@@ -29,7 +29,8 @@
       "expo-sqlite",
       "expo-router",
       "expo-asset",
-      "expo-camera"
+      "expo-camera",
+      "expo-media-library"
     ]
   }
 }

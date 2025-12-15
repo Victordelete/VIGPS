@@ -62,13 +62,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderColor: '#ccc'
   },
-  card: {
+  card2: {
     backgroundColor: "#fff",
     borderRadius: 10,
     marginBottom: 8,
     shadowRadius: 4,
     flexDirection: 'row',
     justifyContent: 'space-around'
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginBottom: 8,
+    shadowRadius: 4,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 7
   },
   name: {
     fontSize: 16,
