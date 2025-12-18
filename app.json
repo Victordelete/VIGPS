@@ -30,7 +30,8 @@
       "expo-router",
       "expo-asset",
       "expo-camera",
-      "expo-media-library"
+      "expo-media-library",
+      "expo-location"
     ]
   }
 }

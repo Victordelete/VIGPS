@@ -1,8 +1,10 @@
 import { CameraView, CameraType, useCameraPermissions, useMicrophonePermissions  } from 'expo-camera';
 import * as MediaLibrary from 'expo-media-library';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import { saveVideo } from "../database/db";
+import { saveVideo, savePositions, getPositionByVideo } from "../database/db";
+import GpsTracker from "../services/GpsTracker"
+import * as Location from "expo-location";
 
 export default function RecordScreen() {
   const [facing, setFacing] = useState(CameraType);
@@ -10,10 +12,18 @@ export default function RecordScreen() {
   const [permissionAudio, requestAudioPermission] = useMicrophonePermissions();
   const [permissionMedia, requestMediaPermission] = MediaLibrary.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
+  const [permissionGps, setPermissionGps] = useState(null);
+  useEffect(() => {
+    (async () => {
+      const { status } =
+        await Location.requestForegroundPermissionsAsync();
+      setPermissionGps(status === "granted");
+    })();
+  }, []);
 
   const cameraRef = useRef(CameraView);
 
-  if (!permissionCamera || !permissionAudio || !permissionMedia) {
+  if (!permissionCamera || !permissionAudio || !permissionMedia || !permissionGps) {
     return <View />;
   }
 
@@ -44,6 +54,14 @@ export default function RecordScreen() {
     );
   }
 
+  if (!permissionGps) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>Necessário permissão para acessar GPS.</Text>
+      </View>
+    );
+  }
+
   function toggleCameraFacing() {
     setFacing(current => (current === CameraType.back ? CameraType.front : CameraType.back));
   }
@@ -54,8 +72,9 @@ export default function RecordScreen() {
     try {
       setIsRecording(true);
 
+      GpsTracker.startTracking();
       const video = await cameraRef.current?.recordAsync();
-
+      const positions = GpsTracker.stopTracking();
       const asset = await MediaLibrary.createAssetAsync(video.uri);
       await MediaLibrary.createAlbumAsync("ViGPSVideos", asset, false);
       const video_values = {
@@ -64,7 +83,11 @@ export default function RecordScreen() {
         path: asset.uri,
         record_date:  new Date(asset.creationTime).toISOString().replace('T', ' ').slice(0, -5),
       };
-      saveVideo(video_values);
+      const video_id = await saveVideo(video_values);
+      if (video_id) {
+        await savePositions(video_id, positions);
+        const positions_get = await getPositionByVideo(video_id);
+      }
       setIsRecording(false);
     } catch (err) {
       console.log("Erro ao gravar vídeo:", err);
@@ -91,7 +114,7 @@ export default function RecordScreen() {
 
       <View style={styles.buttonContainer}>
 
-        <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+        <TouchableOpacity disabled={isRecording} style={styles.button} onPress={toggleCameraFacing}>
           <Text style={styles.text}>Virar</Text>
         </TouchableOpacity>
 

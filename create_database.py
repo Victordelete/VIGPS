@@ -1,6 +1,5 @@
 import sqlite3
 
-
 try:
     conn = sqlite3.connect('assets/database/database.db')
     cursor = conn.cursor()
@@ -36,6 +35,16 @@ try:
                     (3, 1, 'video3', '2000-01-01'),
                     (4, 1, 'video4', '2000-01-01'),
                     (5, 1, 'video5', '2000-01-01');
+
+            CREATE TABLE position (
+                id integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+                video_id INTEGER NOT NULL,
+                altitude INTEGER,
+                latitude DOUBLE PRECISION,
+                longitude DOUBLE PRECISION,
+                timestamp INTEGER,
+                FOREIGN KEY (video_id) REFERENCES video (id) ON DELETE CASCADE
+            );
         """
     )
     print('Conexão com o banco de dados estabelecida com sucesso!')

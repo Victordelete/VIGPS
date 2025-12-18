@@ -11,11 +11,11 @@ export default function LandingScreen({ navigation }) {
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('VideosScreen')} >
-          <Text style={styles.text}>Video</Text>
+          <Text style={styles.text}>Videos</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('SettingsScreen')} >
-          <Text style={styles.text}>Configurações</Text>
+        <TouchableOpacity style={styles.item} onPress={() => navigation.navigate('SaveGps')} >
+          <Text style={styles.text}>Salvar GPS</Text>
         </TouchableOpacity>
       </View>
     </View>

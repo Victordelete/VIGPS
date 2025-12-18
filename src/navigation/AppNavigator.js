@@ -4,9 +4,9 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import HomeScreen from '../screens/HomeScreen';
 import RecordScreen from '../screens/RecordScreen';
-import SettingsScreen from '../screens/SettingsScreen'
 import VideosScreen from '../screens/VideosScreen';
 import LandingScreen from '../screens/LandingScreen';
+import SaveGps from '../screens/SaveGps'
 
 const Stack = createStackNavigator();
 
@@ -18,7 +18,7 @@ export default function AppNavigator() {
         <Stack.Screen name="LandingScreen" component={LandingScreen} options={{ title: ''}} />
         <Stack.Screen name="RecordScreen" component={RecordScreen} options={{ title: ''}} />
         <Stack.Screen name="VideosScreen" component={VideosScreen} options={{ title: ''}} />
-        <Stack.Screen name="SettingsScreen" component={SettingsScreen} options={{ title: ''}} />
+        <Stack.Screen name="SaveGps" component={SaveGps} options={{ title: ''}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
