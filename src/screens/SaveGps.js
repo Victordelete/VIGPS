@@ -1,50 +1,72 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from 'react';
 import { View, Text, Button, StyleSheet } from "react-native";
 import * as Location from "expo-location";
+import { File, Paths } from 'expo-file-system';
+import GpsTracker from "../services/GpsTracker"
 
 export default function SaveGps() {
   const [tracking, setTracking] = useState(false);
   const [lastLocation, setLastLocation] = useState(null);
   const [locations, addLocation] = useState([]);
   const locationSubscription = useRef(null);
+  const [permissionGps, setPermissionGps] = useState(null);
+    useEffect(() => {
+      (async () => {
+        const { status } =
+          await Location.requestForegroundPermissionsAsync();
+        setPermissionGps(status === "granted");
+      })();
+    }, []);
+
+  if (!permissionGps) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.message}>Necessário permissão para acessar GPS.</Text>
+      </View>
+    );
+  }
+
+  function objectToCSV(data) {
+    if (!data || !data.length) return "";
+
+    const headers = Object.keys(data[0]).join(",");
+
+    const rows = data.map(item =>
+      Object.values(item)
+        .map(value => `"${String(value).replace(/"/g, '""')}"`)
+        .join(",")
+    );
+
+    return [headers, ...rows].join("\n");
+  }
+
+  async function saveCSV(csv) {
+    try {
+      const fileUri = `gps_${Date.now()}.csv`;
+
+      const file = new File(Paths.cache, fileUri);
+      file.create();
+      file.write(csv);
+
+
+      console.log("CSV salvo em:", fileUri);
+
+      return fileUri;
+    } catch (err) {
+      console.error("Erro ao salvar CSV:", err);
+    }
+  }
 
   async function startTracking() {
-    const { status } = await Location.requestForegroundPermissionsAsync();
-
-    if (status !== "granted") {
-      alert("Permissão de GPS negada");
-      return;
-    }
-
-    locationSubscription.current =
-      await Location.watchPositionAsync(
-        {
-          accuracy: Location.Accuracy.Highest,
-          timeInterval: 2000, // 2 seconds
-          distanceInterval: 0,
-        },
-        (location) => {
-          const coords = {
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            altitude: location.coords.altitude,
-            accuracy: location.coords.accuracy,
-            timestamp: location.timestamp,
-          };
-          addLocation([...locations, coords]);
-          setLastLocation(coords);
-        }
-      );
-
+    GpsTracker.startTracking();
     setTracking(true);
   }
 
-  function stopTracking() {
-    if (locationSubscription.current) {
-      locationSubscription.current.remove();
-      locationSubscription.current = null;
-    }
-    console.log(locations);
+  async function stopTracking() {
+    const positions = GpsTracker.stopTracking();
+    const positions_csv = objectToCSV(positions);
+    const file_name = await saveCSV(positions_csv);
+    console.log(file_name);
     setTracking(false);
   }
 

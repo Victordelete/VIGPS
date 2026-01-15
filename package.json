@@ -25,6 +25,7 @@
     "expo-media-library": "~18.2.1",
     "expo-notifications": "~0.32.13",
     "expo-router": "~6.0.15",
+    "expo-sharing": "~14.0.8",
     "expo-sqlite": "~16.0.9",
     "expo-status-bar": "~3.0.8",
     "react": "19.1.0",

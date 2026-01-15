@@ -7,6 +7,7 @@ class GpsTracker {
   positions = [];
 
   async startTracking() {
+    this.positions = [];
     this.locationSubscription =
       await Location.watchPositionAsync(
         {
