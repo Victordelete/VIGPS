@@ -1,3 +1,4 @@
+export default `
 PRAGMA user_version = 001;
 
 CREATE TABLE user (
@@ -37,3 +38,5 @@ CREATE TABLE position (
     timestamp INTEGER,
     FOREIGN KEY (video_id) REFERENCES video (id) ON DELETE CASCADE
 );
+
+`
