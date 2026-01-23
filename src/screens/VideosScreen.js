@@ -24,13 +24,21 @@ export default function VideosScreen({ navigation }) {
       <View>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.date}>{item.record_date}</Text>
-        <Text style={styles.date}>{item.is_s}</Text>
+
+        <View style={styles.actionRow}>
+          <TouchableOpacity
+            onPress={() => console.log('Apagar video.')}
+            style={styles.actionButton}>
+            <FontAwesome5 name="trash" size={20} color="#0a84ff" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPress={() => console.log('Download arquivo com gps dados.')}
+            style={styles.actionButton}>
+            <FontAwesome5 name="download" size={20} color="#0a84ff" />
+          </TouchableOpacity>
+        </View>
       </View>
-      <TouchableOpacity
-        onPress={() => console.log('Sincronizar item.')}
-        style={{paddingTop: 12}}>
-        <FontAwesome5 name="paper-plane" size={20} color="#0a84ff" />
-      </TouchableOpacity>
     </View>
   );
 
@@ -60,25 +68,14 @@ const styles = StyleSheet.create({
   item: {
     padding: 20,
     borderBottomWidth: 1,
-    borderColor: '#ccc'
-  },
-  card2: {
-    backgroundColor: "#fff",
-    borderRadius: 10,
-    marginBottom: 8,
-    shadowRadius: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-around'
+    borderColor: '#acacac'
   },
   card: {
     backgroundColor: "#fff",
     borderRadius: 10,
     marginBottom: 8,
     shadowRadius: 4,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 7
+    padding: 12,
   },
   name: {
     fontSize: 16,
@@ -88,5 +85,14 @@ const styles = StyleSheet.create({
     marginTop: 6,
     fontSize: 10,
     color: "#555",
-  }
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+    marginTop: 8,
+  },
+  actionButton: {
+    marginRight: 15,
+    marginTop: -15
+  },
 });
