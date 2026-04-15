@@ -12,7 +12,7 @@ class GpsTracker {
       await Location.watchPositionAsync(
         {
           accuracy: Location.Accuracy.Highest,
-          timeInterval: 0.5*1000, // seconds
+          timeInterval: 0.1*1000, // seconds
           distanceInterval: 0,
         },
         (location) => {

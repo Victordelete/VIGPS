@@ -6,7 +6,8 @@ import HomeScreen from '../screens/HomeScreen';
 import RecordScreen from '../screens/RecordScreen';
 import VideosScreen from '../screens/VideosScreen';
 import LandingScreen from '../screens/LandingScreen';
-import SaveGps from '../screens/SaveGps'
+import SaveGps from '../screens/SaveGps';
+import PositionsMapScreen from '../screens/PositionsMapScreen';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ export default function AppNavigator() {
         <Stack.Screen name="RecordScreen" component={RecordScreen} options={{ title: ''}} />
         <Stack.Screen name="VideosScreen" component={VideosScreen} options={{ title: ''}} />
         <Stack.Screen name="SaveGps" component={SaveGps} options={{ title: ''}} />
+        <Stack.Screen name="PositionsMap" component={PositionsMapScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

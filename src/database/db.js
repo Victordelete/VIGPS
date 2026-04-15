@@ -75,3 +75,16 @@ export async function getPositionByVideo(video_id) {
     console.log("Erro", err);
   }
 };
+
+export async function deleteVideoById(video_id) {
+  try {
+    const db = SQLite.openDatabaseSync(DB_NAME);
+    const result = await db.runAsync(
+      `DELETE FROM video WHERE id = ?`,
+      [video_id]
+    );
+    return result;
+  } catch (err) {
+    console.log("Erro ao deletar:", err);
+  }
+}

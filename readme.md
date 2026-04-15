@@ -58,3 +58,51 @@ Lista com os vídeos gravados e possíveis ações individuais:
 Tela para gravação de dados de GPS diretamente:
 
 ![Tela Gravação de GPS](img\save_gps_screen.jpeg)
+
+
+## Build
+
+✅ 1. Instalar o EAS CLI
+
+No seu projeto, instale o CLI:
+
+npm install -g eas-cli
+
+Depois faça login:
+
+eas login
+✅ 2. Inicializar o EAS no projeto
+
+Dentro da pasta do projeto:
+
+eas init
+
+Isso vai criar o arquivo eas.json.
+
+✅ 3. Configurar para gerar APK
+
+Por padrão, o Expo gera AAB (Android App Bundle).
+Para gerar APK, edite o eas.json:
+
+{
+  "build": {
+    "preview": {
+      "android": {
+        "buildType": "apk"
+      }
+    }
+  }
+}
+✅ 4. Gerar o APK
+
+Agora rode:
+
+eas build -p android --profile preview
+-p android → plataforma Android
+--profile preview → usa a config que você criou
+✅ 5. Baixar o APK
+
+Após o build:
+
+O Expo vai te dar um link
+Você pode baixar direto o .apk e instalar no celular

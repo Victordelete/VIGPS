@@ -13,15 +13,30 @@ export default function RecordScreen() {
   const [permissionMedia, requestMediaPermission] = MediaLibrary.usePermissions();
   const [isRecording, setIsRecording] = useState(false);
   const [permissionGps, setPermissionGps] = useState(null);
+  const [elapsedTime, setElapsedTime] = useState(0);      // segundos decorridos
+  const timerRef = useRef(null);                           // referência do intervalo
+
   useEffect(() => {
     (async () => {
-      const { status } =
-        await Location.requestForegroundPermissionsAsync();
+      const { status } = await Location.requestForegroundPermissionsAsync();
       setPermissionGps(status === "granted");
     })();
   }, []);
 
+  // Limpa o timer se o componente for desmontado durante gravação
+  useEffect(() => {
+    return () => clearInterval(timerRef.current);
+  }, []);
+
   const cameraRef = useRef(CameraView);
+
+  function formatTime(seconds) {
+    const h = Math.floor(seconds / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    if (h > 0) return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '00')}`;
+  }
 
   if (!permissionCamera || !permissionAudio || !permissionMedia || !permissionGps) {
     return <View />;
@@ -71,6 +86,10 @@ export default function RecordScreen() {
 
     try {
       setIsRecording(true);
+      setElapsedTime(0);
+      timerRef.current = setInterval(() => {
+        setElapsedTime(prev => prev + 1);
+      }, 1000);
 
       GpsTracker.startTracking();
       const video = await cameraRef.current?.recordAsync();
@@ -81,25 +100,26 @@ export default function RecordScreen() {
         user_id: 1,
         name: asset.filename.slice(0, -4),
         path: asset.uri,
-        record_date:  new Date(asset.creationTime).toISOString().replace('T', ' ').slice(0, -5),
+        record_date: new Date(asset.creationTime).toISOString().replace('T', ' ').slice(0, -5),
       };
       const video_id = await saveVideo(video_values);
       if (video_id) {
         await savePositions(video_id, positions);
         const positions_get = await getPositionByVideo(video_id);
       }
-      setIsRecording(false);
     } catch (err) {
       console.log("Erro ao gravar vídeo:", err);
-      setIsRecording(false);
     } finally {
-      setRecording(false);
+      clearInterval(timerRef.current);
+      setElapsedTime(0);
+      setIsRecording(false);
     }
   };
 
   const stopRecording = () => {
     if (!cameraRef.current) return;
     cameraRef.current.stopRecording();
+    clearInterval(timerRef.current);
     setIsRecording(false);
   };
 
@@ -107,13 +127,20 @@ export default function RecordScreen() {
     <View style={styles.container}>
       <CameraView
         mode='video'
-        style={styles.camera} 
-        facing={facing} 
+        style={styles.camera}
+        facing={facing}
         ref={cameraRef}
       />
 
-      <View style={styles.buttonContainer}>
+      {/* Cronômetro — só aparece durante a gravação */}
+      {isRecording && (
+        <View style={styles.timerContainer}>
+          <View style={styles.recordingDot} />
+          <Text style={styles.timerText}>{formatTime(elapsedTime)}</Text>
+        </View>
+      )}
 
+      <View style={styles.buttonContainer}>
         <TouchableOpacity disabled={isRecording} style={styles.button} onPress={toggleCameraFacing}>
           <Text style={styles.text}>Virar</Text>
         </TouchableOpacity>
@@ -127,7 +154,6 @@ export default function RecordScreen() {
             <Text style={styles.text}>Parar</Text>
           </TouchableOpacity>
         )}
-
       </View>
     </View>
   );
@@ -143,6 +169,30 @@ const styles = StyleSheet.create({
   },
   camera: {
     flex: 1,
+  },
+  timerContainer: {
+    position: 'absolute',
+    top: 52,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(0,0,0,0.45)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  recordingDot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: 'red',
+  },
+  timerText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: 'bold',
+    fontVariant: ['tabular-nums'],  // evita o texto "pulando" a cada segundo
   },
   buttonContainer: {
     position: 'absolute',
